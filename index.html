@@ -6,7 +6,7 @@
   <style>
     body {
       margin: 0;
-      background-color: #f4efe3; /* Kremiškas logotipo fonas */
+      background-color: #f4efe3;
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
       padding: 60px 20px;
@@ -25,11 +25,48 @@
       font-size: 20px;
       opacity: 0.8;
     }
+    .bear {
+      width: 180px;
+      margin: 0 auto 30px;
+    }
+    .hand {
+      transform-origin: top right;
+      animation: wave 1.5s infinite ease-in-out;
+    }
+    @keyframes wave {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(15deg); }
+      50% { transform: rotate(0deg); }
+      75% { transform: rotate(-15deg); }
+      100% { transform: rotate(0deg); }
+    }
   </style>
 </head>
 <body>
+
   <img src="logo.png" alt="Meshkos logo">
+
+  <!-- SVG Meškutis su mojuojančia ranka -->
+  <svg class="bear" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Kūnas -->
+    <circle cx="100" cy="120" r="60" fill="#8B5E3C"/>
+    <!-- Galva -->
+    <circle cx="100" cy="70" r="40" fill="#A67C52"/>
+    <!-- Akys -->
+    <circle cx="85" cy="65" r="5" fill="#fff"/>
+    <circle cx="115" cy="65" r="5" fill="#fff"/>
+    <!-- Nosis -->
+    <circle cx="100" cy="75" r="6" fill="#333"/>
+    <!-- Kairė ranka -->
+    <rect x="32" y="90" width="20" height="60" rx="10" ry="10" fill="#A67C52"/>
+    <!-- Dešinė ranka – mojuojanti -->
+    <g class="hand">
+      <rect x="148" y="70" width="20" height="60" rx="10" ry="10" fill="#A67C52"/>
+    </g>
+  </svg>
+
   <h1>Our bears are getting ready...</h1>
   <p>We’re crafting something adorable for your little ones. See you soon!</p>
+
 </body>
 </html>
