@@ -2,6 +2,7 @@
 <html lang="lt">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meshkos.com</title>
   <style>
     html, body {
@@ -9,16 +10,69 @@
       padding: 0;
       height: 100%;
       width: 100%;
+      overflow: hidden;
+      background-color: #fce3b2;
     }
+
     body {
+      animation: fadeIn 2s ease-in-out forwards;
+      opacity: 0;
       background-image: url('meshkos-comingsoon.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-color: #fce3b2;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    .loading {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: sans-serif;
+      font-size: 18px;
+      color: #6c4a3f;
+    }
+
+    .loading span {
+      animation: blink 1.5s infinite;
+    }
+
+    .loading span:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .loading span:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0; }
+      40% { opacity: 1; }
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+      body {
+        background-size: contain;
+      }
     }
   </style>
 </head>
-<body>
+<body onclick="playSound()">
+
+  <div class="loading">Kraunamės<span>.</span><span>.</span><span>.</span></div>
+
+  <audio id="pop" preload="auto">
+    <source src="https://www.soundjay.com/button/button-16.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    function playSound() {
+      document.getElementById('pop').play();
+    }
+  </script>
 </body>
 </html>
