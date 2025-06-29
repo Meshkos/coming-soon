@@ -14,7 +14,6 @@
       background-color: #fce3b2;
       font-family: 'Segoe UI', sans-serif;
     }
-
     body {
       background-image: url('meshkos-comingsoon.png');
       background-size: cover;
@@ -23,11 +22,9 @@
       animation: fadeIn 2s ease-in-out forwards;
       opacity: 0;
     }
-
     @keyframes fadeIn {
       to { opacity: 1; }
     }
-
     .title {
       position: absolute;
       top: 30px;
@@ -42,16 +39,13 @@
       animation: typing 3s steps(12, end), blink .8s step-end infinite;
       z-index: 10;
     }
-
     @keyframes typing {
       from { width: 0 }
       to { width: 12ch }
     }
-
     @keyframes blink {
       50% { border-color: transparent }
     }
-
     .bubble {
       position: absolute;
       bottom: -100px;
@@ -59,12 +53,10 @@
       border-radius: 50%;
       animation: floatUp 10s linear infinite;
     }
-
     @keyframes floatUp {
       0% { transform: translateY(0) scale(1); opacity: 1; }
       100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
     }
-
     .star {
       position: absolute;
       background: white;
@@ -74,12 +66,10 @@
       top: 0;
       animation: twinkle 2s infinite ease-in-out;
     }
-
     @keyframes twinkle {
       0%, 100% { opacity: 0.1; }
       50% { opacity: 1; }
     }
-
     .subscribe {
       position: absolute;
       bottom: 20px;
@@ -94,7 +84,6 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       z-index: 20;
     }
-
     .subscribe input[type="email"] {
       padding: 10px 14px;
       border-radius: 20px;
@@ -108,7 +97,6 @@
       background-position: 10px center;
       padding-left: 35px;
     }
-
     .subscribe button {
       background-color: #f5b042;
       color: #fff;
@@ -118,7 +106,6 @@
       cursor: pointer;
       font-size: 14px;
     }
-
     .sound-toggle {
       position: absolute;
       bottom: 80px;
@@ -131,7 +118,20 @@
       cursor: pointer;
       z-index: 20;
     }
-
+    .thanks {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff3cd;
+      padding: 12px 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      font-size: 16px;
+      color: #856404;
+      display: none;
+      z-index: 21;
+    }
     canvas {
       position: fixed;
       top: 0;
@@ -139,22 +139,36 @@
       pointer-events: none;
       z-index: 5;
     }
-
-    @media (max-aspect-ratio: 3/4) {
-      body {
-        background-size: cover;
-      }
-    }
   </style>
 </head>
 <body>
-
   <canvas id="fireworks"></canvas>
-
   <div class="title">Meshkos.com</div>
-
-  <!-- Stars -->
+  <div class="thanks" id="thanksMsg">Thanks! You're in! 🎉</div>
+  <form class="subscribe" id="subscribeForm">
+    <input type="email" name="email" placeholder="Your email" required />
+    <button type="submit">Subscribe</button>
+  </form>
+  <audio id="bg-music" loop autoplay>
+    <source src="https://www.bensound.com/bensound-music/bensound-cute.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="growl" preload="auto">
+    <source src="https://www.soundjay.com/animal/bear-roar-01.mp3" type="audio/mpeg">
+  </audio>
+  <button class="sound-toggle" onclick="toggleSound()">🔊</button>
   <script>
+    const bgMusic = document.getElementById("bg-music");
+    const growl = document.getElementById("growl");
+    const soundButton = document.querySelector(".sound-toggle");
+    bgMusic.volume = 0.2;
+    function toggleSound() {
+      bgMusic.muted = !bgMusic.muted;
+      soundButton.textContent = bgMusic.muted ? "🔇" : "🔊";
+    }
+    window.addEventListener("click", () => {
+      if (!bgMusic.paused && !bgMusic.muted) growl.play();
+    });
+
     for (let i = 0; i < 80; i++) {
       const star = document.createElement("div");
       star.classList.add("star");
@@ -164,10 +178,7 @@
       star.style.width = star.style.height = (1 + Math.random() * 2) + "px";
       document.body.appendChild(star);
     }
-  </script>
 
-  <!-- Bubbles -->
-  <script>
     for (let i = 0; i < 20; i++) {
       let bubble = document.createElement("div");
       bubble.classList.add("bubble");
@@ -178,45 +189,7 @@
       bubble.style.height = size + "px";
       document.body.appendChild(bubble);
     }
-  </script>
 
-  <!-- Subscribe -->
-  <form class="subscribe" action="https://formspree.io/f/xzzgozed" method="POST" onsubmit="triggerFireworks();">
-    <input type="email" name="email" placeholder="Your email" required />
-    <button type="submit">Subscribe</button>
-  </form>
-
-  <!-- Music -->
-  <audio id="bg-music" loop autoplay>
-    <source src="https://www.bensound.com/bensound-music/bensound-cute.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- Roar -->
-  <audio id="growl" preload="auto">
-    <source src="https://www.soundjay.com/animal/bear-roar-01.mp3" type="audio/mpeg">
-  </audio>
-
-  <button class="sound-toggle" onclick="toggleSound()">🔊</button>
-
-  <script>
-    const bgMusic = document.getElementById("bg-music");
-    const growl = document.getElementById("growl");
-    const soundButton = document.querySelector(".sound-toggle");
-
-    bgMusic.volume = 0.2;
-
-    function toggleSound() {
-      bgMusic.muted = !bgMusic.muted;
-      soundButton.textContent = bgMusic.muted ? "🔇" : "🔊";
-    }
-
-    window.addEventListener("click", () => {
-      if (!bgMusic.paused && !bgMusic.muted) growl.play();
-    });
-  </script>
-
-  <!-- Fireworks Script -->
-  <script>
     const canvas = document.getElementById("fireworks");
     const ctx = canvas.getContext("2d");
     let fireworks = [];
@@ -227,14 +200,6 @@
     }
     window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
-
-    function triggerFireworks() {
-      event.preventDefault();
-      createFirework(Math.random() * canvas.width, Math.random() * canvas.height / 2 + 100);
-      setTimeout(() => {
-        document.querySelector('.subscribe').submit();
-      }, 1000);
-    }
 
     function createFirework(x, y) {
       for (let i = 0; i < 50; i++) {
@@ -269,7 +234,22 @@
       requestAnimationFrame(drawFireworks);
     }
     drawFireworks();
-  </script>
 
+    document.getElementById("subscribeForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const email = this.email.value;
+      createFirework(window.innerWidth / 2, window.innerHeight / 2);
+      document.getElementById("thanksMsg").style.display = "block";
+      setTimeout(() => {
+        document.getElementById("thanksMsg").style.display = "none";
+      }, 4000);
+      await fetch("https://formspree.io/f/xzzgozed", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email })
+      });
+      this.reset();
+    });
+  </script>
 </body>
 </html>
