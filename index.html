@@ -92,6 +92,7 @@
       gap: 10px;
       align-items: center;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      z-index: 20;
     }
 
     .subscribe input[type="email"] {
@@ -128,18 +129,15 @@
       padding: 10px 14px;
       font-size: 16px;
       cursor: pointer;
+      z-index: 20;
     }
 
-    .talking-bear {
-      position: absolute;
-      bottom: 140px;
-      left: 30px;
-      background: #fff8dc;
-      padding: 12px 16px;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      font-size: 14px;
-      color: #6c4a3f;
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 5;
     }
 
     @media (max-aspect-ratio: 3/4) {
@@ -151,8 +149,9 @@
 </head>
 <body>
 
+  <canvas id="fireworks"></canvas>
+
   <div class="title">Meshkos.com</div>
-  <div class="talking-bear">Hey there! Want a surprise soon? 🎁</div>
 
   <!-- Stars -->
   <script>
@@ -182,13 +181,13 @@
   </script>
 
   <!-- Subscribe -->
-  <form class="subscribe" action="https://formspree.io/f/xzzgozed" method="POST">
+  <form class="subscribe" action="https://formspree.io/f/xzzgozed" method="POST" onsubmit="triggerFireworks();">
     <input type="email" name="email" placeholder="Your email" required />
     <button type="submit">Subscribe</button>
   </form>
 
-  <!-- Background music -->
-  <audio id="bg-music" loop autoplay muted>
+  <!-- Music -->
+  <audio id="bg-music" loop autoplay>
     <source src="https://www.bensound.com/bensound-music/bensound-cute.mp3" type="audio/mpeg">
   </audio>
 
@@ -197,39 +196,79 @@
     <source src="https://www.soundjay.com/animal/bear-roar-01.mp3" type="audio/mpeg">
   </audio>
 
-  <button class="sound-toggle" onclick="toggleSound()">🔇</button>
+  <button class="sound-toggle" onclick="toggleSound()">🔊</button>
 
   <script>
     const bgMusic = document.getElementById("bg-music");
     const growl = document.getElementById("growl");
     const soundButton = document.querySelector(".sound-toggle");
-    let activated = false;
-    let soundMuted = true;
+
+    bgMusic.volume = 0.2;
 
     function toggleSound() {
-      soundMuted = !soundMuted;
-      bgMusic.muted = soundMuted;
-      soundButton.textContent = soundMuted ? "🔇" : "🔊";
-    }
-
-    function activateAudio() {
-      if (!activated) {
-        bgMusic.muted = false;
-        bgMusic.volume = 0.2; // 20% volume
-        bgMusic.play().catch(() => {});
-        soundButton.textContent = "🔊";
-        activated = true;
-        soundMuted = false;
-      }
+      bgMusic.muted = !bgMusic.muted;
+      soundButton.textContent = bgMusic.muted ? "🔇" : "🔊";
     }
 
     window.addEventListener("click", () => {
-      activateAudio();
-      if (!soundMuted) growl.play();
+      if (!bgMusic.paused && !bgMusic.muted) growl.play();
     });
+  </script>
 
-    window.addEventListener("touchstart", activateAudio);
-    window.addEventListener("scroll", activateAudio);
+  <!-- Fireworks Script -->
+  <script>
+    const canvas = document.getElementById("fireworks");
+    const ctx = canvas.getContext("2d");
+    let fireworks = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    function triggerFireworks() {
+      event.preventDefault();
+      createFirework(Math.random() * canvas.width, Math.random() * canvas.height / 2 + 100);
+      setTimeout(() => {
+        document.querySelector('.subscribe').submit();
+      }, 1000);
+    }
+
+    function createFirework(x, y) {
+      for (let i = 0; i < 50; i++) {
+        const angle = Math.random() * 2 * Math.PI;
+        const speed = Math.random() * 5 + 2;
+        fireworks.push({
+          x: x,
+          y: y,
+          dx: Math.cos(angle) * speed,
+          dy: Math.sin(angle) * speed,
+          life: 60,
+          color: `hsl(${Math.random() * 360}, 100%, 60%)`
+        });
+      }
+    }
+
+    function drawFireworks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = fireworks.length - 1; i >= 0; i--) {
+        const f = fireworks[i];
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = f.color;
+        ctx.fill();
+        f.x += f.dx;
+        f.y += f.dy;
+        f.life--;
+        if (f.life <= 0) {
+          fireworks.splice(i, 1);
+        }
+      }
+      requestAnimationFrame(drawFireworks);
+    }
+    drawFireworks();
   </script>
 
 </body>
