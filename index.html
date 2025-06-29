@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="lt">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,7 +12,7 @@
       width: 100%;
       overflow: hidden;
       background-color: #fce3b2;
-      font-family: sans-serif;
+      font-family: 'Segoe UI', sans-serif;
     }
 
     body {
@@ -28,6 +28,30 @@
       to { opacity: 1; }
     }
 
+    /* Title animation */
+    .title {
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 40px;
+      color: #6c4a3f;
+      letter-spacing: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: .15em solid #6c4a3f;
+      animation: typing 3s steps(12, end), blink .8s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 12ch }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+
     .bubble {
       position: absolute;
       bottom: -100px;
@@ -37,14 +61,8 @@
     }
 
     @keyframes floatUp {
-      0% {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-120vh) scale(1.2);
-        opacity: 0;
-      }
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
     }
 
     .subscribe {
@@ -59,11 +77,6 @@
       gap: 10px;
       align-items: center;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease;
-    }
-
-    .subscribe:active {
-      transform: scale(0.98);
     }
 
     .subscribe input[type="email"] {
@@ -88,11 +101,6 @@
       border-radius: 20px;
       cursor: pointer;
       font-size: 14px;
-      transition: background 0.3s ease;
-    }
-
-    .subscribe button:hover {
-      background-color: #e39d20;
     }
 
     .sound-toggle {
@@ -107,18 +115,25 @@
       cursor: pointer;
     }
 
-    .success-message {
+    .talking-bear {
       position: absolute;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 140px;
+      left: 30px;
       background: #fff8dc;
-      padding: 12px 20px;
+      padding: 12px 16px;
       border-radius: 20px;
-      color: #6c4a3f;
-      font-size: 14px;
-      display: none;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      font-size: 14px;
+      color: #6c4a3f;
+    }
+
+    .dancing-bear {
+      position: absolute;
+      bottom: 120px;
+      right: 20px;
+      width: 100px;
+      display: none;
+      z-index: 10;
     }
 
     @media (max-aspect-ratio: 3/4) {
@@ -130,7 +145,15 @@
 </head>
 <body>
 
-  <!-- Burbulai -->
+  <div class="title">Meshkos.com</div>
+
+  <!-- Talking bear speech bubble -->
+  <div class="talking-bear">Hey there! Want a surprise soon? 🎁</div>
+
+  <!-- Dancing bear gif (hidden by default) -->
+  <img src="https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif" class="dancing-bear" id="dancingBear" alt="Dancing Bear">
+
+  <!-- Bubble animation -->
   <script>
     for (let i = 0; i < 20; i++) {
       let bubble = document.createElement("div");
@@ -144,33 +167,30 @@
     }
   </script>
 
-  <!-- Prenumeratos forma -->
-  <form class="subscribe" action="https://formspree.io/f/xzzgozed" method="POST" onsubmit="showMessage(event)">
-    <input type="email" name="email" placeholder="Tavo el. paštas" required />
-    <button type="submit">Prenumeruoti</button>
+  <!-- Subscription form -->
+  <form class="subscribe" action="https://formspree.io/f/xzzgozed" method="POST">
+    <input type="email" name="email" placeholder="Your email" required />
+    <button type="submit">Subscribe</button>
   </form>
 
-  <!-- Padėkos žinutė -->
-  <div class="success-message" id="thankYou">Ačiū! Mes su tavim susisieksim 💌</div>
-
-  <!-- Muzika -->
+  <!-- Background music -->
   <audio id="bg-music" loop autoplay muted>
     <source src="https://www.bensound.com/bensound-music/bensound-happyrock.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Riaumojimas -->
+  <!-- Bear roar sound -->
   <audio id="growl" preload="auto">
     <source src="https://www.soundjay.com/animal/bear-roar-01.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Mute/Unmute -->
+  <!-- Mute/Unmute button -->
   <button class="sound-toggle" onclick="toggleSound()">🔇</button>
 
   <script>
     const bgMusic = document.getElementById("bg-music");
     const growl = document.getElementById("growl");
     const soundButton = document.querySelector(".sound-toggle");
-    const thankYou = document.getElementById("thankYou");
+    const dancingBear = document.getElementById("dancingBear");
     let activated = false;
     let soundMuted = true;
 
@@ -190,33 +210,21 @@
       }
     }
 
+    function showDancingBear() {
+      dancingBear.style.display = "block";
+      setTimeout(() => {
+        dancingBear.style.display = "none";
+      }, 2000);
+    }
+
     window.addEventListener("click", (e) => {
       activateAudio();
       if (!soundMuted) growl.play();
+      showDancingBear();
     });
 
     window.addEventListener("touchstart", activateAudio);
     window.addEventListener("scroll", activateAudio);
-
-    function showMessage(e) {
-      e.preventDefault();
-      const form = e.target;
-      fetch(form.action, {
-        method: "POST",
-        body: new FormData(form),
-        headers: {
-          Accept: "application/json",
-        },
-      }).then(response => {
-        if (response.ok) {
-          thankYou.style.display = "block";
-          form.reset();
-          setTimeout(() => {
-            thankYou.style.display = "none";
-          }, 5000);
-        }
-      });
-    }
   </script>
 
 </body>
