@@ -28,7 +28,6 @@
       to { opacity: 1; }
     }
 
-    /* Title animation */
     .title {
       position: absolute;
       top: 30px;
@@ -150,8 +149,8 @@
   <!-- Talking bear speech bubble -->
   <div class="talking-bear">Hey there! Want a surprise soon? 🎁</div>
 
-  <!-- Dancing bear gif (hidden by default) -->
-  <img src="https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif" class="dancing-bear" id="dancingBear" alt="Dancing Bear">
+  <!-- Dancing bear gif -->
+  <img src="https://media.giphy.com/media/f9k1tV7HyORcngKF8v/giphy.gif" class="dancing-bear" id="dancingBear" alt="Dancing Bear">
 
   <!-- Bubble animation -->
   <script>
@@ -175,7 +174,7 @@
 
   <!-- Background music -->
   <audio id="bg-music" loop autoplay muted>
-    <source src="https://www.bensound.com/bensound-music/bensound-happyrock.mp3" type="audio/mpeg">
+    <source src="https://www.bensound.com/bensound-music/bensound-cute.mp3" type="audio/mpeg">
   </audio>
 
   <!-- Bear roar sound -->
@@ -203,6 +202,7 @@
     function activateAudio() {
       if (!activated) {
         bgMusic.muted = false;
+        bgMusic.volume = 0.2; // 20% volume
         bgMusic.play().catch(() => {});
         soundButton.textContent = "🔊";
         activated = true;
