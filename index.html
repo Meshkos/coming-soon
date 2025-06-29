@@ -31,8 +31,6 @@
     .bubble {
       position: absolute;
       bottom: -100px;
-      width: 30px;
-      height: 30px;
       background: rgba(255, 255, 255, 0.4);
       border-radius: 50%;
       animation: floatUp 10s linear infinite;
@@ -108,40 +106,62 @@
       bubble.classList.add("bubble");
       bubble.style.left = Math.random() * 100 + "vw";
       bubble.style.animationDuration = (5 + Math.random() * 10) + "s";
-      bubble.style.width = bubble.style.height = (10 + Math.random() * 30) + "px";
+      let size = 10 + Math.random() * 30;
+      bubble.style.width = size + "px";
+      bubble.style.height = size + "px";
       document.body.appendChild(bubble);
     }
   </script>
 
   <!-- Prenumerata -->
-  <form class="subscribe" action="YOUR_FORMSPREE_URL_HERE" method="POST">
+  <form class="subscribe" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
     <input type="email" name="email" placeholder="Tavo el. paštas" required />
     <button type="submit">Prenumeruoti</button>
   </form>
 
-  <!-- Garsas -->
+  <!-- Muzika -->
+  <audio id="bg-music" loop autoplay muted>
+    <source src="https://www.bensound.com/bensound-music/bensound-happyrock.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Garsas paspaudus -->
   <audio id="pop" preload="auto">
     <source src="https://www.soundjay.com/buttons/sounds/button-16.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Mute/unmute -->
-  <button class="sound-toggle" onclick="toggleSound()">🔊</button>
+  <!-- Mute/Unmute -->
+  <button class="sound-toggle" onclick="toggleSound()">🔇</button>
 
   <script>
+    const bgMusic = document.getElementById("bg-music");
     const pop = document.getElementById("pop");
-    const soundToggle = document.querySelector(".sound-toggle");
-    let soundMuted = false;
-
-    document.body.addEventListener("click", function () {
-      if (!soundMuted) {
-        pop.play();
-      }
-    });
+    const soundButton = document.querySelector(".sound-toggle");
+    let activated = false;
+    let soundMuted = true;
 
     function toggleSound() {
       soundMuted = !soundMuted;
-      soundToggle.textContent = soundMuted ? "🔇" : "🔊";
+      bgMusic.muted = soundMuted;
+      soundButton.textContent = soundMuted ? "🔇" : "🔊";
     }
+
+    function activateAudio() {
+      if (!activated) {
+        bgMusic.muted = false;
+        bgMusic.play().catch(() => {});
+        soundButton.textContent = "🔊";
+        activated = true;
+        soundMuted = false;
+      }
+    }
+
+    window.addEventListener("click", (e) => {
+      activateAudio();
+      if (!soundMuted) pop.play();
+    });
+
+    window.addEventListener("touchstart", activateAudio);
+    window.addEventListener("scroll", activateAudio);
   </script>
 
 </body>
