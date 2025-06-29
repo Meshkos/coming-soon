@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="lt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Meshkos.com</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meshkos.com 🧸</title>
   <style>
     html, body {
       margin: 0;
@@ -12,59 +12,77 @@
       width: 100%;
       overflow: hidden;
       background-color: #fce3b2;
-      touch-action: manipulation;
+      font-family: sans-serif;
     }
 
     body {
-      animation: fadeIn 2s ease-in-out forwards;
-      opacity: 0;
       background-image: url('meshkos-comingsoon.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      background-attachment: fixed;
+      animation: fadeIn 2s ease-in-out forwards;
+      opacity: 0;
     }
 
     @keyframes fadeIn {
       to { opacity: 1; }
     }
 
-    @media (max-aspect-ratio: 3/4) {
-      body {
-        background-size: cover;
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      width: 30px;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      animation: floatUp 10s linear infinite;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-120vh) scale(1.2);
+        opacity: 0;
       }
     }
 
-    .loading {
+    .subscribe {
       position: absolute;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      font-family: sans-serif;
-      font-size: 18px;
-      color: #6c4a3f;
+      background: rgba(255,255,255,0.9);
+      padding: 10px 20px;
+      border-radius: 30px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
 
-    .loading span {
-      animation: blink 1.5s infinite;
+    .subscribe input[type="email"] {
+      padding: 8px 12px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      outline: none;
     }
 
-    .loading span:nth-child(2) {
-      animation-delay: 0.3s;
-    }
-
-    .loading span:nth-child(3) {
-      animation-delay: 0.6s;
-    }
-
-    @keyframes blink {
-      0%, 80%, 100% { opacity: 0; }
-      40% { opacity: 1; }
+    .subscribe button {
+      background-color: #f5b042;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
     }
 
     .sound-toggle {
       position: absolute;
-      bottom: 20px;
+      bottom: 80px;
       right: 20px;
       background: rgba(255,255,255,0.7);
       border: none;
@@ -72,56 +90,59 @@
       padding: 10px 14px;
       font-size: 16px;
       cursor: pointer;
-      font-family: sans-serif;
-      transition: background 0.3s;
     }
 
-    .sound-toggle:hover {
-      background: rgba(255,255,255,0.9);
+    @media (max-aspect-ratio: 3/4) {
+      body {
+        background-size: cover;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="loading">Kraunamės<span>.</span><span>.</span><span>.</span></div>
-  <button class="sound-toggle" onclick="toggleSound(event)">🔇</button>
+  <!-- Burbulai -->
+  <script>
+    for (let i = 0; i < 20; i++) {
+      let bubble = document.createElement("div");
+      bubble.classList.add("bubble");
+      bubble.style.left = Math.random() * 100 + "vw";
+      bubble.style.animationDuration = (5 + Math.random() * 10) + "s";
+      bubble.style.width = bubble.style.height = (10 + Math.random() * 30) + "px";
+      document.body.appendChild(bubble);
+    }
+  </script>
 
-  <audio id="bg-music" loop autoplay muted>
-    <source src="https://cdn.pixabay.com/download/audio/2023/03/01/audio_d3ecbd8f84.mp3?filename=baby-dream-139634.mp3" type="audio/mpeg">
+  <!-- Prenumerata -->
+  <form class="subscribe" action="YOUR_FORMSPREE_URL_HERE" method="POST">
+    <input type="email" name="email" placeholder="Tavo el. paštas" required />
+    <button type="submit">Prenumeruoti</button>
+  </form>
+
+  <!-- Garsas -->
+  <audio id="pop" preload="auto">
+    <source src="https://www.soundjay.com/buttons/sounds/button-16.mp3" type="audio/mpeg">
   </audio>
 
+  <!-- Mute/unmute -->
+  <button class="sound-toggle" onclick="toggleSound()">🔊</button>
+
   <script>
-    const audio = document.getElementById('bg-music');
-    const soundButton = document.querySelector('.sound-toggle');
+    const pop = document.getElementById("pop");
+    const soundToggle = document.querySelector(".sound-toggle");
+    let soundMuted = false;
 
-    // kai tik vartotojas sąveikauja – leidžiam garsą
-    let activated = false;
-    function activateAudio() {
-      if (!activated) {
-        audio.muted = false;
-        audio.play().catch(() => {});
-        soundButton.textContent = "🔊";
-        activated = true;
+    document.body.addEventListener("click", function () {
+      if (!soundMuted) {
+        pop.play();
       }
-    }
+    });
 
-    // mute/unmute toggle
-    function toggleSound(e) {
-      e.stopPropagation();
-      if (audio.muted) {
-        audio.muted = false;
-        soundButton.textContent = "🔊";
-        audio.play().catch(() => {});
-      } else {
-        audio.muted = true;
-        soundButton.textContent = "🔇";
-      }
+    function toggleSound() {
+      soundMuted = !soundMuted;
+      soundToggle.textContent = soundMuted ? "🔇" : "🔊";
     }
-
-    // klausom pirmo paspaudimo, palietimo ar scroll'inimo
-    window.addEventListener("click", activateAudio);
-    window.addEventListener("touchstart", activateAudio);
-    window.addEventListener("scroll", activateAudio);
   </script>
+
 </body>
 </html>
