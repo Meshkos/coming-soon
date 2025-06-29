@@ -81,37 +81,47 @@
     }
   </style>
 </head>
-<body onclick="startMusic()">
+<body>
 
   <div class="loading">Kraunamės<span>.</span><span>.</span><span>.</span></div>
-  <button class="sound-toggle" onclick="toggleSound(event)">🔊</button>
+  <button class="sound-toggle" onclick="toggleSound(event)">🔇</button>
 
-  <audio id="bg-music" loop>
-    <source src="https://www.bensound.com/bensound-music/bensound-happyrock.mp3" type="audio/mpeg">
+  <audio id="bg-music" loop autoplay muted>
+    <source src="https://cdn.pixabay.com/download/audio/2023/03/01/audio_d3ecbd8f84.mp3?filename=baby-dream-139634.mp3" type="audio/mpeg">
   </audio>
 
   <script>
     const audio = document.getElementById('bg-music');
     const soundButton = document.querySelector('.sound-toggle');
-    let hasStarted = false;
 
-    function startMusic() {
-      if (!hasStarted) {
+    // kai tik vartotojas sąveikauja – leidžiam garsą
+    let activated = false;
+    function activateAudio() {
+      if (!activated) {
+        audio.muted = false;
         audio.play().catch(() => {});
-        hasStarted = true;
+        soundButton.textContent = "🔊";
+        activated = true;
       }
     }
 
+    // mute/unmute toggle
     function toggleSound(e) {
-      e.stopPropagation(); // kad nepaleistų iš naujo
+      e.stopPropagation();
       if (audio.muted) {
         audio.muted = false;
         soundButton.textContent = "🔊";
+        audio.play().catch(() => {});
       } else {
         audio.muted = true;
         soundButton.textContent = "🔇";
       }
     }
+
+    // klausom pirmo paspaudimo, palietimo ar scroll'inimo
+    window.addEventListener("click", activateAudio);
+    window.addEventListener("touchstart", activateAudio);
+    window.addEventListener("scroll", activateAudio);
   </script>
 </body>
 </html>
