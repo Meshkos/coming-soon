@@ -2,7 +2,7 @@
 <html lang="lt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Meshkos.com</title>
   <style>
     html, body {
@@ -12,6 +12,7 @@
       width: 100%;
       overflow: hidden;
       background-color: #fce3b2;
+      touch-action: manipulation;
     }
 
     body {
@@ -21,10 +22,17 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
+      background-attachment: fixed;
     }
 
     @keyframes fadeIn {
       to { opacity: 1; }
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+      body {
+        background-size: cover;
+      }
     }
 
     .loading {
@@ -54,24 +62,55 @@
       40% { opacity: 1; }
     }
 
-    @media (max-aspect-ratio: 3/4) {
-      body {
-        background-size: contain;
-      }
+    .sound-toggle {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.7);
+      border: none;
+      border-radius: 50px;
+      padding: 10px 14px;
+      font-size: 16px;
+      cursor: pointer;
+      font-family: sans-serif;
+      transition: background 0.3s;
+    }
+
+    .sound-toggle:hover {
+      background: rgba(255,255,255,0.9);
     }
   </style>
 </head>
-<body onclick="playSound()">
+<body onclick="startMusic()">
 
   <div class="loading">Kraunamės<span>.</span><span>.</span><span>.</span></div>
+  <button class="sound-toggle" onclick="toggleSound(event)">🔊</button>
 
-  <audio id="pop" preload="auto">
-    <source src="https://www.soundjay.com/button/button-16.mp3" type="audio/mpeg">
+  <audio id="bg-music" loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-happyrock.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    function playSound() {
-      document.getElementById('pop').play();
+    const audio = document.getElementById('bg-music');
+    const soundButton = document.querySelector('.sound-toggle');
+    let hasStarted = false;
+
+    function startMusic() {
+      if (!hasStarted) {
+        audio.play().catch(() => {});
+        hasStarted = true;
+      }
+    }
+
+    function toggleSound(e) {
+      e.stopPropagation(); // kad nepaleistų iš naujo
+      if (audio.muted) {
+        audio.muted = false;
+        soundButton.textContent = "🔊";
+      } else {
+        audio.muted = true;
+        soundButton.textContent = "🔇";
+      }
     }
   </script>
 </body>
